@@ -1,5 +1,5 @@
 import puppeteer from 'puppeteer-core'
-import path from 'path'
+import { POINT_PASSWORD, POINT_USER } from '../constant/enviroments'
 
 const URL = 'https://www.ahgora.com.br/batidaonline'
 
@@ -18,10 +18,10 @@ class PointService {
     })
 
     await page.waitForSelector('#account_i');
-    await page.$eval('#account_i', el => el.value = '00109');
+    await page.$eval('#account_i', el => el.value = POINT_USER);
 
     await page.waitForSelector('#password_i');
-    await page.$eval('#password_i', el => el.value = 'Fe260493');
+    await page.$eval('#password_i', el => el.value = POINT_PASSWORD);
 
     await page.click('#botao_entrar')
   }
