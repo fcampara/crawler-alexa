@@ -5,8 +5,9 @@ const URL = 'https://www.ahgora.com.br/batidaonline'
 
 class PointService {
   async beatTime() {
+    console.log('Beat time fired')
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       args: ['--disable-infobars'],
       executablePath: '/opt/google/chrome/google-chrome',
       userDataDir: '/home/felipecs/.config/google-chrome/Default'
@@ -18,12 +19,15 @@ class PointService {
     })
 
     await page.waitForSelector('#account_i');
-    await page.$eval('#account_i', el => el.value = POINT_USER);
+    await page.$eval('#account_i', el => el.value = '00109');
 
     await page.waitForSelector('#password_i');
-    await page.$eval('#password_i', el => el.value = POINT_PASSWORD);
+    await page.$eval('#password_i', el => el.value = 'Fe260493');
 
     await page.click('#botao_entrar')
+
+    await browser.close()
+    console.log('Beat time end')
   }
 }
 
