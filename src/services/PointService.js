@@ -7,7 +7,7 @@ class PointService {
   async beatTime() {
     console.log('Beat time fired')
     const browser = await puppeteer.launch({
-      headless: false,
+      headless: true,
       args: ['--disable-infobars'],
       executablePath: '/opt/google/chrome/google-chrome',
       userDataDir: '/home/felipecs/.config/google-chrome/Default'
