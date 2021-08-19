@@ -1,5 +1,7 @@
 import app from './app'
+import { LoggerApp } from './lib/loggers'
+const port = process.env.PORT || '2604'
 
-app.listen(process.env.PORT || '2604', () => {
-  console.log('Server runing in port 2604')
+app.listen(port, () => {
+  LoggerApp(`Server running in ${port}`)
 })

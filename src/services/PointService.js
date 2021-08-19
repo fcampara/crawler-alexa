@@ -1,12 +1,14 @@
 import puppeteer from 'puppeteer-core'
-import { POINT_PASSWORD, POINT_USER } from '../constant/enviroments'
+import { LoggerBeatTime } from '../lib/loggers'
+
 
 const URL = 'https://www.ahgora.com.br/batidaonline'
 
 class PointService {
   async beatTime() {
-    console.log('Beat time fired')
-    const browser = await puppeteer.launch({
+    LoggerBeatTime('Beat time fired')
+    try {
+      const browser = await puppeteer.launch({
       headless: true,
       args: ['--disable-infobars'],
       executablePath: '/opt/google/chrome/google-chrome',
@@ -27,7 +29,10 @@ class PointService {
     await page.click('#botao_entrar')
 
     await browser.close()
-    console.log('Beat time end')
+    LoggerBeatTime('Beat time end')
+    } catch (error) {
+      LoggerBeatTime('Error in beat time fired', JSON.stringify(error, '', 2))
+    }
   }
 }
 
