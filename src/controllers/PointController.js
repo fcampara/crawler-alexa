@@ -2,9 +2,9 @@ import { StatusCodes } from "http-status-codes"
 import PointService from "../services/PointService"
 
 class PointController {
-  async post(req, res) {
+  async post(_, res) {
     const point = await PointService.beatTime()
-    res.status(StatusCodes.OK).json({})
+    res.status(StatusCodes.OK).json(point)
   }
 }
 
