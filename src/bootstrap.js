@@ -2,9 +2,9 @@ const dotenv = require('dotenv')
 
 const env = {
   development: '.env',
-  production: '.env',
+  production: '.env'
 }
 
 dotenv.config({
-  path: env[process.env.ENV],
+  path: env[process.env.ENV]
 })

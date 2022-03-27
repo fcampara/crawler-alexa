@@ -6,7 +6,7 @@ import helmet from 'helmet'
 import routes from './routes/_index.routes'
 
 class App {
-  constructor() {
+  constructor () {
     this.server = express()
 
     this.middlewares()
@@ -14,19 +14,19 @@ class App {
     this.exceptionsHandler()
   }
 
-  middlewares() {
+  middlewares () {
     this.server.use(cors())
     this.server.use(helmet())
     this.server.use(express.json())
   }
 
-  routes() {
+  routes () {
     this.server.use('/api/v1', routes)
   }
 
-  exceptionsHandler() {
+  exceptionsHandler () {
     this.server.use(async (err, _, res, __) => {
-      let message =
+      const message =
         (err.message?.message && 'Erro interno') ||
         err.message ||
         'Error interno'
@@ -34,7 +34,7 @@ class App {
       const errors =
         err.errors?.map(({ name, error, message, validatorKey }) => ({
           name: name || validatorKey,
-          error: error || message,
+          error: error || message
         })) || []
 
       const status = err.status || 500
@@ -42,9 +42,9 @@ class App {
         info: {
           message,
           errors,
-          status,
+          status
         },
-        status,
+        status
       }
       return res.status(error.status).json(error.info)
     })
