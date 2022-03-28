@@ -32,7 +32,7 @@ class PointNexusService {
 
       await page.waitForSelector('#txtSENHA')
       await page.$eval('#txtSENHA', function (el) {
-        el.value = 'PASSWORD'
+        el.value = 'PASS'
       })
 
       await page.waitForSelector('#cboLocal')
@@ -40,14 +40,12 @@ class PointNexusService {
         el.value = '6055'
       })
 
-      await page.waitForSelector('#imgCaptcha') // wait for the selector to load
+      await page.waitForSelector('#nexuscaptcha')
+      await page.waitForSelector('#imgCaptcha')
       const logo = await page.$('#imgCaptcha')
-      const box = await logo.boundingBox() // this method returns an array of geometric parameters of the element in pixels.
-      const x = box.x // coordinate x
-      const y = box.y // coordinate y
-      const w = box.width // area width
-      const h = box.height // area height
-      const base64 = await page.screenshot({ clip: { x: x, y: y, width: w, height: h }, encoding: 'base64' }) // take screenshot of the required area in puppeteer
+      const box = await logo.boundingBox()
+      const { x, y, width, height } = box
+      const base64 = await page.screenshot({ clip: { x, y, width, height }, encoding: 'base64' })
       const imageBuffer = Buffer.from(base64, 'base64')
 
       await tesseract.load()
@@ -56,13 +54,30 @@ class PointNexusService {
       const {
         data: { text }
       } = await tesseract.recognize(imageBuffer)
-      await tesseract.terminate()
 
       LoggerBeatTime('captcha', text)
 
       await page.waitForSelector('#captchacode')
       await page.$eval('#captchacode', (el, value) => (el.value = value), text)
 
+      await page.click('#btOk')
+
+      await page.waitForFunction(
+        'document.querySelector("#btOk").innerText.includes("Registrar")'
+      )
+
+      await page.waitForSelector('.notification')
+      const backgroundColor = await page.evaluate(() => {
+        return document.querySelector('.notification').style.backgroundColor
+      })
+
+      if (backgroundColor === 'goldenrod') {
+        LoggerBeatTime('Wrong captcha retry')
+        await browser.close()
+        return this.beatTime()
+      }
+
+      await page.on('dialog', async (dialog) => dialog.accept())
       LoggerBeatTime('Beat time end')
       await browser.close()
     } catch (error) {
