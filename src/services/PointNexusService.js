@@ -20,6 +20,10 @@ class PointNexusService {
         waitUntil: 'networkidle2'
       })
 
+      await page.waitForFunction(
+        'Boolean(document.querySelector(".notification"))'
+      )
+
       await page.waitForSelector('#cboCampo')
       await page.$eval('#cboCampo', function (el) {
         el.value = '2'
@@ -42,8 +46,8 @@ class PointNexusService {
 
       await page.waitForSelector('#nexuscaptcha')
       await page.waitForSelector('#imgCaptcha')
-      const logo = await page.$('#imgCaptcha')
-      const box = await logo.boundingBox()
+      const imgCaptcha = await page.$('#imgCaptcha')
+      const box = await imgCaptcha.boundingBox()
       const { x, y, width, height } = box
       const base64 = await page.screenshot({ clip: { x, y, width, height }, encoding: 'base64' })
       const imageBuffer = Buffer.from(base64, 'base64')
@@ -62,8 +66,10 @@ class PointNexusService {
 
       await page.click('#btOk')
 
+      page.on('dialog', (dialog) => dialog.accept())
+
       await page.waitForFunction(
-        'document.querySelector("#btOk").innerText.includes("Registrar")'
+        'document.querySelector("#btOk")?.innerText?.includes("Registrar")'
       )
 
       await page.waitForSelector('.notification')
@@ -77,7 +83,8 @@ class PointNexusService {
         return this.beatTime()
       }
 
-      await page.on('dialog', async (dialog) => dialog.accept())
+      page.on('dialog', (dialog) => dialog.accept())
+
       LoggerBeatTime('Beat time end')
       await browser.close()
     } catch (error) {
